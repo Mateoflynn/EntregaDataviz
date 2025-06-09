@@ -11,7 +11,7 @@
   let rightStickPosition = { x: 0, y: 0 };
   let animationFrame = 0;
   
-  // Determine which platform-specific SVG controller to show
+  // Check if this should use SVG controller (PlayStation games)
   const PS = game.platform && game.platform.includes('PlayStation');
   const Xbox = game.platform && game.platform.includes('Xbox');
   const Nintendo = game.platform && game.platform.includes('Nintendo');
@@ -80,16 +80,3 @@
   <SvgJoystick {game} />
 
 {/if}
-
-<style>
-  @keyframes pulse {
-    0%, 100% { 
-      opacity: 1; 
-      transform: scale(1);
-    }
-    50% { 
-      opacity: 0.7; 
-      transform: scale(0.9);
-    }
-  }
-</style>

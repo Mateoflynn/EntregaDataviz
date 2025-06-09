@@ -1,14 +1,12 @@
 <script>
   import Hero from './Hero.svelte';
   import Explanation from './Explanation.svelte';
-  import ReleaseChart from './ReleaseChart.svelte';
   import JoystickGrid from './JoystickGrid.svelte';
 </script>
 
 <main class="min-h-screen bg-gray-900">
   <Hero />
   <Explanation />
-  <ReleaseChart />
   <JoystickGrid />
 </main>
 

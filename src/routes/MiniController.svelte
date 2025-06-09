@@ -1,5 +1,8 @@
-<script context="module">
-  export function computeControllerProps(example) {
+<script>
+  let { example } = $props();
+  
+  // Get the appropriate visual properties based on example type
+  const getControllerProps = $derived.by(() => {
     const props = {
       platform: example.platform || 'modern',
       genre: example.genre || 'Action',
@@ -9,34 +12,29 @@
       year: example.year || 2020,
       color: example.color || 'from-gray-500 to-gray-400'
     };
-
+    
+    // Override color if provided directly
     if (example.color) {
       props.color = example.color;
     } else {
+      // Genre color mapping
       const genreColors = {
-        'Acción': '#ef4444',
-        'Aventura': '#22c55e',
-        'RPG': '#7c3aed',
-        'Estrategia': '#06b6d4',
-        'Deportes': '#f59e0b',
-        'Puzzle': '#ec4899',
-        'Carreras': '#3b82f6',
-        'Lucha': '#dc2626',
-        'Simulación': '#0d9488'
-      };
+        'Acción': '#ef4444',        // rojo
+        'Aventura': '#22c55e',      // verde más brillante, distinto de Simulación
+        'RPG': '#7c3aed',           // violeta más oscuro (para alejarlo de Carreras)
+        'Estrategia': '#06b6d4',    // cian
+        'Deportes': '#f59e0b',      // amarillo
+        'Puzzle': '#ec4899',        // rosa
+        'Carreras': '#3b82f6',      // azul vibrante, más diferenciado del violeta
+        'Lucha': '#dc2626',         // rojo oscuro
+        'Simulación': '#0d9488'     // verde azulado más oscuro, diferente de Aventura
+      }
 
       props.color = genreColors[props.genre] || 'from-gray-500 to-gray-400';
     }
-
+    
     return props;
-  }
-</script>
-
-<script>
-  let { example } = $props();
-
-  // Get the appropriate visual properties based on example type
-  const getControllerProps = $derived.by(() => computeControllerProps(example));
+  });
   
   const controllerProps = $derived(getControllerProps);
 </script>
