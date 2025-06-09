@@ -4,11 +4,11 @@
   import FilterControls from './FilterControls.svelte';
   import { gameData } from './gameData.js';
   
-  let gridRef = null;
-  let isVisible = false;
-  let filters = {};
-  let sortBy = 'releaseYear';
-  let games = [...gameData];
+  let gridRef = $state(null);
+  let isVisible = $state(false);
+  let filters = $state({});
+  let sortBy = $state('releaseYear');
+  let games = $state([...gameData]);
   
   // Filter and sort games
   function updateGames() {
@@ -86,8 +86,8 @@
     updateGames();
   }
 
-  function handleSortChange(newSortBy) {
-    sortBy = newSortBy;
+  function handleSortChange(newSort) {
+    sortBy = newSort;
     updateGames();
   }
 </script>
@@ -128,7 +128,7 @@
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-yellow-400" style="font-family: 'zrnic rg', sans-serif;">
-            {games.length > 0 ? Math.round(games.reduce((sum, game) => sum + game.rating, 0) / games.length * 10) / 10 : 0}
+            {Math.round(games.reduce((sum, game) => sum + game.rating, 0) / games.length * 10) / 10}
           </div>
           <div class="text-gray-400" style="font-family: 'zrnic rg', sans-serif;">Valoración Media</div>
         </div>
@@ -139,8 +139,8 @@
     <FilterControls 
       {filters} 
       {sortBy} 
-      onfilterChange={handleFilterChange}
-      onsortChange={handleSortChange}
+      filterChange={handleFilterChange}
+      sortChange={handleSortChange}
     />
     
     <!-- Controllers grid -->
