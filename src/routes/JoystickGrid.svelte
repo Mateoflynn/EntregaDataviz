@@ -5,8 +5,17 @@
   
   let gridRef = $state();
   let isVisible = $state(false);
-  // Ordenar los juegos por año de lanzamiento ascendente
-  let games = $state([...gameData].sort((a, b) => a.releaseYear - b.releaseYear));
+
+  let selectedGenre = $state('Todos');
+  let selectedPlatform = $state('Todas');
+  let sortKey = $state('releaseYear');
+
+  $: genres = ['Todos', ...new Set(gameData.map(g => g.genre))];
+  $: platforms = ['Todas', ...new Set(gameData.map(g => g.platform))];
+  $: games = [...gameData]
+    .filter(g => selectedGenre === 'Todos' || g.genre === selectedGenre)
+    .filter(g => selectedPlatform === 'Todas' || g.platform === selectedPlatform)
+    .sort((a, b) => a[sortKey] - b[sortKey]);
   
   onMount(() => {
     const observer = new IntersectionObserver(
@@ -37,7 +46,7 @@
   
   <div class="max-w-7xl mx-auto relative z-10">
     <!-- Section header -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-8">
       <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-6" style="font-family: 'zrnic rg', sans-serif;">
         <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
           GAME DATA PLAYGROUND
@@ -65,6 +74,24 @@
           <div class="text-3xl font-bold text-pink-400" style="font-family: 'zrnic rg', sans-serif;">♾️</div>
           <div class="text-gray-400" style="font-family: 'zrnic rg', sans-serif;">Posibilidades</div>
         </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4 mb-6">
+        <select bind:value={selectedGenre} class="bg-gray-800 text-white p-2 rounded">
+          {#each genres as g}
+            <option>{g}</option>
+          {/each}
+        </select>
+        <select bind:value={selectedPlatform} class="bg-gray-800 text-white p-2 rounded">
+          {#each platforms as p}
+            <option>{p}</option>
+          {/each}
+        </select>
+        <select bind:value={sortKey} class="bg-gray-800 text-white p-2 rounded">
+          <option value="releaseYear">Año</option>
+          <option value="rating">Rating</option>
+          <option value="popularity">Popularidad</option>
+        </select>
       </div>
     </div>
     
