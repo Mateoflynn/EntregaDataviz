@@ -4,11 +4,19 @@
   import FilterControls from './FilterControls.svelte';
   import { gameData } from './gameData.js';
   
-  let gridRef = null;
-  let isVisible = false;
-  let filters = {};
-  let sortBy = 'releaseYear';
-  let games = [...gameData];
+  let gridRef = $state(null);
+  let isVisible = $state(false);
+  let filters = $state({});
+  let sortBy = $state('releaseYear');
+  let games = $state([...gameData]);
+  let currentPage = $state(1);
+  let gamesPerPage = $state(24); // 5 rows × 6 columns
+  
+  // Calculate pagination
+  const totalPages = $derived(Math.ceil(games.length / gamesPerPage));
+  const startIndex = $derived((currentPage - 1) * gamesPerPage);
+  const endIndex = $derived(startIndex + gamesPerPage);
+  const currentGames = $derived(games.slice(startIndex, endIndex));
   
   // Filter and sort games
   function updateGames() {
@@ -60,6 +68,32 @@
     });
     
     games = filteredGames;
+    currentPage = 1; // Reset to first page when filters change
+  }
+  
+  function nextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+      if (gridRef) {
+        gridRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+  
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      if (gridRef) {
+        gridRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+  
+  function goToPage(page) {
+    currentPage = page;
+    if (gridRef) {
+      gridRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
   
   onMount(() => {
@@ -112,7 +146,7 @@
       <div class="flex flex-wrap justify-center gap-8 mb-12">
         <div class="text-center">
           <div class="text-3xl font-bold text-cyan-400" style="font-family: 'zrnic rg', sans-serif;">{games.length}</div>
-          <div class="text-gray-400" style="font-family: 'zrnic rg', sans-serif;">Juegos Mostrados</div>
+          <div class="text-gray-400" style="font-family: 'zrnic rg', sans-serif;">Juegos Totales</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-purple-400" style="font-family: 'zrnic rg', sans-serif;">
@@ -139,14 +173,24 @@
     <FilterControls 
       {filters} 
       {sortBy} 
-      onfilterChange={handleFilterChange}
-      onsortChange={handleSortChange}
+      filterChange={handleFilterChange}
+      sortChange={handleSortChange}
     />
     
+    <!-- Pagination Info -->
+    {#if games.length > gamesPerPage}
+      <div class="text-center mb-6">
+        <p class="text-gray-400">
+          Mostrando {startIndex + 1}-{Math.min(endIndex, games.length)} de {games.length} juegos
+          (Página {currentPage} de {totalPages})
+        </p>
+      </div>
+    {/if}
+    
     <!-- Controllers grid -->
-    {#if games.length > 0}
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-8">
-        {#each games as game, index}
+    {#if currentGames.length > 0}
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 md:gap-8 min-h-[600px]">
+        {#each currentGames as game, index}
           <div 
             class="transform transition-all duration-500"
             class:animate-fade-in-scale={isVisible}
@@ -156,6 +200,58 @@
           </div>
         {/each}
       </div>
+      
+      <!-- Pagination Controls -->
+      {#if totalPages > 1}
+        <div class="flex justify-center items-center mt-12 space-x-4">
+          <button 
+            onclick={prevPage}
+            disabled={currentPage === 1}
+            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 rounded-lg transition-colors duration-200 text-white"
+          >
+            ← Anterior
+          </button>
+          
+          <div class="flex space-x-2">
+            {#each Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+              const startPage = Math.max(1, currentPage - 2);
+              const endPage = Math.min(totalPages, startPage + 4);
+              return startPage + i;
+            }).filter(page => page <= totalPages) as page}
+              <button 
+                onclick={() => goToPage(page)}
+                class="px-3 py-2 rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'}"
+              >
+                {page}
+              </button>
+            {/each}
+          </div>
+          
+          <button 
+            onclick={nextPage}
+            disabled={currentPage === totalPages}
+            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 rounded-lg transition-colors duration-200 text-white"
+          >
+            Siguiente →
+          </button>
+        </div>
+        
+        <!-- Page jump -->
+        <div class="text-center mt-6">
+          <span class="text-gray-400 text-sm">
+            Ir a página: 
+          </span>
+          <select 
+            bind:value={currentPage}
+            onchange={() => goToPage(currentPage)}
+            class="ml-2 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm"
+          >
+            {#each Array.from({length: totalPages}, (_, i) => i + 1) as page}
+              <option value={page}>{page}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
     {:else}
       <div class="text-center py-16">
         <div class="text-6xl mb-4">🎮</div>

@@ -47,37 +47,36 @@
     <!-- Market Size Evolution -->
     <div class="mb-20">
       <h3 class="text-3xl font-bold text-white mb-8 text-center">Evolución del Mercado Global</h3>
-      <div class="bg-gray-800/50 backdrop-blur-sm rounded-lg p-8 border border-gray-700">
+      <div class="bg-gray-900 rounded-lg p-8 border border-gray-800">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Chart area -->
-          <div class="relative h-80 bg-gray-900 rounded-lg p-6">
-            <!-- Axes -->
+          <div class="relative h-80 bg-transparent rounded-lg p-6">
+            <!-- Ejes -->
             <div class="absolute bottom-6 left-6 right-6 h-px bg-gray-600"></div>
             <div class="absolute bottom-6 left-6 top-6 w-px bg-gray-600"></div>
-            
-            <!-- Axis labels - properly positioned -->
-            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm z-0">
+            <!-- Etiquetas de ejes -->
+            <!-- Años en el eje X -->
+            <div class="absolute left-6 right-6 bottom-0 flex justify-between text-xs text-gray-400 select-none pointer-events-none">
+              {#each industryData.globalMarketSize as point}
+                <span>{point.year}</span>
+              {/each}
+            </div>
+            <!-- Etiqueta del eje X más abajo -->
+            <div class="absolute left-1/2 bottom-[-1.5rem] transform -translate-x-1/2 text-gray-400 text-sm z-0">
               Año
             </div>
-            <div class="absolute left-2 top-1/2 transform -translate-y-1/2 -rotate-90 text-gray-400 text-sm z-0">
+            <!-- Etiqueta del eje Y horizontal, alineada con el eje y más arriba -->
+            <div class="absolute left-6 top-0 text-gray-400 text-sm z-0">
               Ingresos (Billones USD)
             </div>
-            
-            <!-- Data points and lines -->
-            {#each industryData.globalMarketSize as point, index}
-              {#if index > 0}
-                <div 
-                  class="absolute h-0.5 bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-1000"
-                  style="
-                    left: {6 + ((industryData.globalMarketSize[index-1].year - 1980) / (2023 - 1980)) * 82}%; 
-                    bottom: {6 + (industryData.globalMarketSize[index-1].value / 184) * 82}%;
-                    width: {((point.year - industryData.globalMarketSize[index-1].year) / (2023 - 1980)) * 82}%;
-                    transform: rotate({Math.atan2((point.value - industryData.globalMarketSize[index-1].value) / 184 * 82, ((point.year - industryData.globalMarketSize[index-1].year) / (2023 - 1980)) * 82) * 180 / Math.PI}deg);
-                    transform-origin: left center;
-                    opacity: {isVisible ? 1 : 0};
-                  "
-                ></div>
-              {/if}
+            <!-- Valores del eje Y un poco más separados del eje -->
+            {#each [0, 50, 100, 150, 184] as yVal}
+              <div class="absolute" style="left: 0.5rem; bottom: {6 + (yVal / 184) * 82}%; min-width:2.5rem;">
+                <span class="text-xs text-gray-400 text-right block select-none" style="transform: translateX(-100%);">{yVal}</span>
+              </div>
+            {/each}
+            <!-- Solo puntos, sin líneas -->
+            {#each industryData.globalMarketSize as point}
               <div 
                 class="absolute w-3 h-3 bg-cyan-400 rounded-full transition-all duration-1000 hover:scale-150 cursor-pointer group z-10"
                 style="
@@ -97,19 +96,16 @@
               </div>
             {/each}
           </div>
-          
-          <!-- Key insights -->
-          <div class="space-y-6">
+          <!-- Insights -->
+          <div class="flex flex-col gap-6 justify-center">
             <div class="bg-gradient-to-r from-cyan-900/50 to-cyan-800/50 p-6 rounded-lg border border-cyan-700">
               <h4 class="text-xl font-bold text-cyan-400 mb-3">$184 Billones</h4>
               <p class="text-gray-300">Tamaño del mercado global en 2023, creciendo un 920% desde el año 2000</p>
             </div>
-            
             <div class="bg-gradient-to-r from-purple-900/50 to-purple-800/50 p-6 rounded-lg border border-purple-700">
               <h4 class="text-xl font-bold text-purple-400 mb-3">3.2 Billones</h4>
               <p class="text-gray-300">Jugadores activos en todo el mundo, casi la mitad de la población global</p>
             </div>
-            
             <div class="bg-gradient-to-r from-pink-900/50 to-pink-800/50 p-6 rounded-lg border border-pink-700">
               <h4 class="text-xl font-bold text-pink-400 mb-3">Mobile First</h4>
               <p class="text-gray-300">Los dispositivos móviles representan el 52% de todos los ingresos gaming</p>
@@ -119,7 +115,7 @@
       </div>
     </div>
 
-    <!-- Regional Markets - Fixed to 6 items -->
+    <!-- Regional Markets 
     <div class="mb-20">
       <h3 class="text-3xl font-bold text-white mb-8 text-center">Mercados Regionales</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -148,7 +144,7 @@
                 <span class="text-yellow-400 font-semibold">+{region.growth}%</span>
               </div>
               
-              <!-- Market share bar with label -->
+            
               <div class="mt-4">
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Participación del mercado global</span>
@@ -165,7 +161,7 @@
           </div>
         {/each}
         
-        <!-- Add sixth item for balance -->
+        
         <div 
           class="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700 transform transition-all duration-1000"
           class:translate-y-0={isVisible}
@@ -184,33 +180,28 @@
               <span class="text-gray-300">Ingresos:</span>
               <span class="text-green-400 font-semibold">$1.8B</span>
             </div>
-            
             <div class="flex justify-between items-center">
               <span class="text-gray-300">Crecimiento:</span>
               <span class="text-yellow-400 font-semibold">+15.2%</span>
             </div>
-            
-            <!-- Market share bar with label -->
+          
             <div class="mt-4">
               <div class="flex justify-between text-xs text-gray-400 mb-1">
                 <span>Participación del mercado global</span>
                 <span>1%</span>
               </div>
               <div class="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
-                  style="width: {isVisible ? 1 : 0}%"
-                ></div>
+                <div class="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-1000" style="width: {isVisible ? 1 : 0}%"></div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        -->
+      
+    
 
     <!-- Gaming Innovation Waves - Replacing Technology Milestones -->
     <div class="mb-20">
-      <h3 class="text-3xl font-bold text-white mb-8 text-center">Olas de Innovación Gaming</h3>
+      <h3 class="text-3xl font-bold text-white mb-8 text-center">Olas de Innovación</h3>
       <div class="bg-gray-800/50 backdrop-blur-sm rounded-lg p-8 border border-gray-700">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
@@ -293,62 +284,80 @@
       </div>
     </div>
 
-    <!-- Demographics Evolution - With proper labels -->
+    <!-- Demographics Evolution - With visible values -->
     <div>
-      <h3 class="text-3xl font-bold text-white mb-8 text-center">Evolución Demográfica del Gaming</h3>
+      <h3 class="text-3xl font-bold text-white mb-8 text-center">Evolución Demográfica</h3>
       <div class="bg-gray-800/50 backdrop-blur-sm rounded-lg p-8 border border-gray-700">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {#each ['avgAge', 'femalePercent', 'casualPercent'] as metric}
-            <div class="text-center">
-              <h4 class="text-xl font-bold text-white mb-4">
-                {metric === 'avgAge' ? 'Edad Promedio' : metric === 'femalePercent' ? 'Jugadoras Femeninas' : 'Jugadores Casuales'}
-              </h4>
-              <div class="relative h-40 bg-gray-900 rounded-lg p-4">
-                <!-- Year labels -->
-                <div class="absolute bottom-1 left-0 right-0 flex justify-between text-xs text-gray-500">
-                  {#each industryData.demographicShifts as point, index}
-                    {#if index % 2 === 0}
-                      <span>{point.year}</span>
-                    {/if}
-                  {/each}
-                </div>
-                
-                {#each industryData.demographicShifts as point, index}
+          <!-- Edad Promedio -->
+          <div class="text-center">
+            <h4 class="text-xl font-bold text-white mb-4">Edad Promedio</h4>
+            <div class="relative h-48 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
+              {#each industryData.demographicShifts as point, index}
+                <div class="flex flex-col items-center w-1/6">
                   <div 
-                    class="absolute w-3 bg-gradient-to-t from-cyan-500 to-purple-500 rounded-t transition-all duration-1000 hover:bg-gradient-to-t hover:from-cyan-400 hover:to-purple-400 cursor-pointer group"
-                    style="
-                      left: {10 + (index / (industryData.demographicShifts.length - 1)) * 75}%; 
-                      bottom: 15px;
-                      height: {isVisible ? (point[metric] / (metric === 'avgAge' ? 40 : 100)) * 75 : 0}%;
-                      opacity: {isVisible ? 1 : 0};
-                    "
-                    title="{point.year}: {point[metric]}{metric === 'avgAge' ? ' años' : '%'}"
-                  >
-                    <!-- Tooltip -->
-                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                      <div class="bg-gray-800 text-white p-2 rounded text-xs whitespace-nowrap border border-gray-600">
-                        <div class="font-semibold">{point.year}</div>
-                        <div>{point[metric]}{metric === 'avgAge' ? ' años' : '%'}</div>
-                      </div>
-                    </div>
-                  </div>
-                {/each}
-              </div>
-              <div class="mt-4">
-                <span class="text-2xl font-bold text-cyan-400">
-                  {industryData.demographicShifts[industryData.demographicShifts.length - 1][metric]}{metric === 'avgAge' ? ' años' : '%'}
-                </span>
-                <div class="text-gray-400 text-sm">en 2023</div>
-              </div>
-              
-              <!-- Legend -->
-              <div class="mt-3 text-xs text-gray-500">
-                Cada barra representa un año desde 2000 hasta 2023
-              </div>
+                    class="w-3 bg-gradient-to-t from-cyan-500 to-purple-500 rounded-t transition-all duration-1000 mb-1"
+                    style="height: {isVisible ? (point.avgAge / 40) * 90 : 0}px; opacity: {isVisible ? 1 : 0};"
+                  ></div>
+                  <span class="text-xs text-cyan-300 font-bold">{point.avgAge}</span>
+                  <span class="text-[10px] text-gray-400">{point.year}</span>
+                </div>
+              {/each}
             </div>
-          {/each}
+            <div class="mt-4">
+              <span class="text-2xl font-bold text-cyan-400">
+                {industryData.demographicShifts[industryData.demographicShifts.length - 1].avgAge} años
+              </span>
+              <div class="text-gray-400 text-sm">en 2023</div>
+            </div>
+          </div>
+          <!-- Jugadoras Femeninas -->
+          <div class="text-center">
+            <h4 class="text-xl font-bold text-white mb-4">Jugadoras Femeninas</h4>
+            <div class="relative h-48 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
+              {#each industryData.demographicShifts as point, index}
+                <div class="flex flex-col items-center w-1/6">
+                  <div 
+                    class="w-3 bg-gradient-to-t from-cyan-500 to-purple-500 rounded-t transition-all duration-1000 mb-1"
+                    style="height: {isVisible ? (point.femalePercent / 100) * 90 : 0}px; opacity: {isVisible ? 1 : 0};"
+                  ></div>
+                  <span class="text-xs text-cyan-300 font-bold">{point.femalePercent}%</span>
+                  <span class="text-[10px] text-gray-400">{point.year}</span>
+                </div>
+              {/each}
+            </div>
+            <div class="mt-4">
+              <span class="text-2xl font-bold text-cyan-400">
+                {industryData.demographicShifts[industryData.demographicShifts.length - 1].femalePercent}%
+              </span>
+              <div class="text-gray-400 text-sm">en 2023</div>
+            </div>
+          </div>
+          <!-- Jugadores Masculinos -->
+          <div class="text-center">
+            <h4 class="text-xl font-bold text-white mb-4">Jugadores Masculinos</h4>
+            <div class="relative h-48 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
+              {#each industryData.demographicShifts as point, index}
+                <div class="flex flex-col items-center w-1/6">
+                  <div 
+                    class="w-3 bg-gradient-to-t from-cyan-500 to-purple-500 rounded-t transition-all duration-1000 mb-1"
+                    style="height: {isVisible ? ((100 - point.femalePercent) / 100) * 90 : 0}px; opacity: {isVisible ? 1 : 0};"
+                  ></div>
+                  <span class="text-xs text-cyan-300 font-bold">{100 - point.femalePercent}%</span>
+                  <span class="text-[10px] text-gray-400">{point.year}</span>
+                </div>
+              {/each}
+            </div>
+            <div class="mt-4">
+              <span class="text-2xl font-bold text-cyan-400">
+                {100 - industryData.demographicShifts[industryData.demographicShifts.length - 1].femalePercent}%
+              </span>
+              <div class="text-gray-400 text-sm">en 2023</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
+  </div> <!-- cierre explícito del div .max-w-7xl mx-auto relative z-10 -->
 </section>

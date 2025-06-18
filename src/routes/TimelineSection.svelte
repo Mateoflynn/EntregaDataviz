@@ -98,9 +98,8 @@
                 
                 <div class="flex justify-between items-center">
                   <span class="text-gray-300">Ventas totales:</span>
-                  <span class="text-green-400 font-semibold">{decade.totalSales}M</span>
+                  <span class="text-green-400 font-semibold">{Math.round(decade.totalSales)}M</span>
                 </div>
-                
                 <div class="flex justify-between items-center">
                   <span class="text-gray-300">Género dominante:</span>
                   <span class="text-purple-400 font-semibold">{decade.topGenre}</span>
