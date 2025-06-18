@@ -163,7 +163,7 @@ const culturalTrends = [
       </div>
     </div>
 
-    <!-- Cultural Gaming Trends -->
+    <!-- Cultural Gaming Trends 
     <div class="mb-20">
       <h3 class="text-3xl font-bold text-white mb-8 text-center">Tendencias Culturales por Región</h3>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -198,7 +198,7 @@ const culturalTrends = [
         {/each}
       </div>
     </div>
-
+    -->
     <!-- Cross-Cultural Gaming Phenomena -->
     <div>
       <h3 class="text-3xl font-bold text-white mb-8 text-center">Fenómenos Gaming Globales</h3>
